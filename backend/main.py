@@ -13,22 +13,25 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-@get('/')
-async def root() ->str:
+
+@get("/")
+async def root() -> str:
     return "root"
 
-@get('/status/{status_code:int}')
+
+@get("/status/{status_code:int}")
 async def return_status(
-        status_code:int,
-        seconds_sleep:int | None = None,
-)->dict:
+    status_code: int,
+    seconds_sleep: int | None = None,
+) -> dict:
     logger.info(f"Hello from litestar! {status_code=}, {seconds_sleep=}")
-    if seconds_sleep :
+    if seconds_sleep:
         await asyncio.sleep(seconds_sleep)
     if status_code and status_code != 200:
         logger.error("Shit happens")
         raise HTTPException(status_code=status_code)
     return {"data": "Hello"}
+
 
 prometheus_config = PrometheusConfig()
 
@@ -40,9 +43,9 @@ app = Litestar(
         description="Open api example documentation",
         version="0.0.1",
         render_plugins=[ScalarRenderPlugin()],
-        path='/docs'
+        path="/docs",
     ),
 )
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8080)
